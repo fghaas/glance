@@ -33,15 +33,17 @@ def get(url, username, password, tenant_name):
     headers = {'Content-Type': 'application/json'}
                  
     data = json.dumps(auth)
-    req = urllib2.Request(url, data, headers )
+    req = urllib2.Request(url, data, headers)
+    res = ""
     try:
         f = urllib2.urlopen(req)
-        token = f.read()
+        res = f.read()
         f.close()
     except:
         sys.exit("JSON request to %s failed" % url)
 
     try:
+        token = json.loads(res)
         print token['access']['token']['id']
     except KeyError:
         sys.exit("Unable to retrieve access token for user %s (tenant %s) from %s" 
