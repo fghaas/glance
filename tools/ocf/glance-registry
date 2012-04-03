@@ -256,11 +256,8 @@ glance_registry_monitor() {
     # and do it if that's the case.
     if [ -n "$OCF_RESKEY_os_username" ] && [ -n "$OCF_RESKEY_os_password" ] \
     && [ -n "$OCF_RESKEY_os_tenant_name" ] && [ -n "$OCF_RESKEY_os_auth_url" ]; then
-        TOKEN=`curl -s -d  "{\"auth\":{\"passwordCredentials\": {\"username\": \"$OCF_RESKEY_os_username\", \
-          \"password\": \"$OCF_RESKEY_os_password\"}, \"tenantName\": \"$OCF_RESKEY_os_tenant_name\"}}" \
-          -H "Content-type: application/json" $OCF_RESKEY_keystone_url | tr ',' '\n' | grep '"id":' \
-          | cut -d'"' -f4 | head --lines 1` 
-        ocf_run -q curl -H "X-Auth-Token: $TOKEN" $OCF_RESKEY_url > /dev/null 2>&1
+        token=`./token-helper.py get "$OCF_RESKEY_keystone_url" "$OCF_RESKEY_os_username" "OCF_RESKEY_os_password" "$OCF_RESKEY_os_tenant_name"` 
+        ocf_run ./token_helper.py check "$OCF_RESKEY_keystone_url" "$token"
         rc=$?
         if [ $rc -ne 0 ]; then
             ocf_log err "Failed to connect to the OpenStack ImageService (glance-registry): $rc"
