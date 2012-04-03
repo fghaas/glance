@@ -53,7 +53,7 @@ def check(url, token):
     headers = {'Content-Type': 'application/json',
                'X-Auth-Token': token}
 
-    req = urllib2.Request(url, data, headers)
+    req = urllib2.Request(url, "", headers)
     try:
         f = urllib2.urlopen(req)
         token = f.read()
